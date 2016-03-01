@@ -17,8 +17,10 @@ class MyScalatraServlet extends WebappStack {
       case Some (e: Map[String, String]) => {
         val user = e.get ("user") match {case Some (x) => x case _ => ""}
         val pass = e.get ("pass") match {case Some (x) => x case _ => ""}
-        println (user + " " + pass)
-        user + " " + pass
+        objects.Credentials.try_login (user, pass) match {
+          case Some (s) => s
+          case _ => status (400); ""
+        }
       }
       case _ => ""
     }
