@@ -6,24 +6,47 @@ import scala.io.Source
 import java.nio.file.{Files, Paths, Path}
 
 class MyScalatraServlet extends WebappStack {
+  val map_of_json = () => 
+    scala.util.parsing.json.JSON.parseFull (request.body) match {
+      case Some (e: Map[String, String]) => e
+      case _ => Map[String, String] ()
+    }
+  
+  /***********
+  *          *
+  * REGISTER *
+  *          *
+  ***********/
+  post ("/api/register") {
+    objects.Credentials.try_register (map_of_json ()) match {
+      case Some (s) => s
+      case _ => status (403); ""
+    }
+  }
+  
   /********
   *       *
   * LOGIN *
   *       *
   ********/
   post ("/api/login") {
-    val json = scala.util.parsing.json.JSON.parseFull (request.body)
-    json match {
-      case Some (e: Map[String, String]) => {
-        val user = e.get ("user") match {case Some (x) => x case _ => ""}
-        val pass = e.get ("pass") match {case Some (x) => x case _ => ""}
-        objects.Credentials.try_login (user, pass) match {
-          case Some (s) => s
-          case _ => status (400); ""
-        }
-      }
-      case _ => status (400); ""
+    val json = map_of_json ()
+    val user = json.get ("user") match {case Some (x) => x case _ => ""}
+    val pass = json.get ("pass") match {case Some (x) => x case _ => ""}
+    objects.Credentials.try_login (user, pass) match {
+      case Some (s) => s
+      case _ => status (403); ""
     }
+  }
+  
+  /*********
+  *        *
+  * LOGOUT *
+  *        *
+  *********/
+  post ("/api/logout") {
+    println ("logout")
+    println (cookies)
   }
   
   /**********
@@ -70,13 +93,13 @@ class MyScalatraServlet extends WebappStack {
           case "js" => get_file_text ()
           case "css" => get_file_text ()
           case "jpg" => Files.readAllBytes (Paths.get (path))
-          case _ => throw new Exception ("There was an internal server error: invalid file type.")
+          case _ => status (400); ""
         }
       }
       catch {
         case e: Throwable =>
           e.printStackTrace ()
-          "There was an internal server error: the page could not be loaded."
+          status (400); ""
       }
   })
 }

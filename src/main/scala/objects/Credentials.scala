@@ -1,14 +1,16 @@
 package objects
 
 object Credentials { 
+  // todo: change to be database driven
   val sid_len = 999
-  val user_regex = "" // remember to check for ^ and $
-  val pass_regex = ""
+  val user_regex = "^[a-zA-Z]*$" // remember to check for ^ and $
+  val pass_regex = "^[a-zA-Z]*$"
   
   case class User (
     val user: String, 
     val pass: String,
-    val name: String
+    val fname: String,
+    val lname: String
   )
   
   var user_list: List[User] = List ()
@@ -16,39 +18,47 @@ object Credentials {
   val user_to_sid = new java.util.HashMap[String, String] ()
   val sid_to_user = new java.util.HashMap[String, String] ()
   
-  var hash_pass = (pass: String) => pass
+  val hash_pass = (pass: String) => pass
   
-  var generate_sid = () =>
+  val generate_sid = () =>
     List.fill (sid_len) {util.Random.nextInt (10)}
       .map (_.toString ())
       .reduce (_ + _)
   
-  var is_user_valid = (u: User) =>
-    u.user.matches (user_regex) && u.pass.matches (pass_regex) &&
-      user_list.exists (h => h.user == u.user && h.pass == hash_pass (u.pass))
-  
-  var register_user = (u: User) =>
-    // if all checks pass, add user
-    if (is_user_valid (u)) {
-      login_user (u)
-      true
-    }
-    else
-      false
-  
-  var is_login_valid = (user: String, pass: String) =>
+  val is_login_valid = (user: String, pass: String) =>
     user_list.find (h => h.user == user && h.pass == hash_pass (pass))
   
-  var login_user = (u: User) => {
-    // deal with sid here
-    user_list = u :: user_list
-    generate_sid ()
+  val login_user = (u: User) => {
+    val sid = generate_sid ()
+    
+    sid
   }
   
-  var try_login = (user: String, pass: String) =>
+  val try_login = (user: String, pass: String) =>
     is_login_valid (user, pass) match {
       case Some (u: User) => Some (login_user (u))
       case _ => None
     }
   
+  def ??[T] (x: Option[T]) (y: T) = x match {case Some (z) => z case _ => y}
+  
+  val is_user_valid = (u: User) =>
+    u.user.matches (user_regex) && u.pass.matches (pass_regex) &&
+      user_list.forall (_.user != u.user)
+  
+  val try_register = (map: Map[String, String]) => {
+    val u = User (
+      ?? (map.get ("user")) (""), 
+      ?? (map.get ("pass")) (""),
+      ?? (map.get ("fname")) (""),
+      ?? (map.get ("lname")) ("")
+    )
+    // if all checks pass, add user
+    if (is_user_valid (u)) {
+      user_list = u :: user_list
+      Some (login_user (u))
+    }
+    else
+      None
+  }
 }
