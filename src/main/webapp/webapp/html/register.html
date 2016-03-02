@@ -1,0 +1,66 @@
+<div ng-controller="RegisterCtrl">
+  <div style="height: 15px"></div>
+  
+  <table style="width: 720px" align="center" border="1">
+    <tr>
+      <td align="center" bgcolor="lightblue">
+        <table>
+          <tr style="height: 35px" />
+          <tr>
+            <td colspan="3" align="center"><font color="red">{{error || ""}}</font></td>
+          </tr>
+          <tr>
+            <td>First name:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="fname"></input></td>
+          </tr>
+          
+          <tr>
+            <td>Username:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="user"></input></td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="pass"></input></td>
+          </tr>
+          <tr>
+            <td>Confirm password:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="pass2"></input></td>
+          </tr>
+          <!-- 
+          <tr>
+            <td>Address:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="address"></input></td>
+          </tr>
+          <tr>
+            <td>City:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="city"></input></td>
+          </tr>
+          <tr>
+            <td>State:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="state"></input></td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td width="10px"></td>
+            <td><input type="text" ng-model="pass"></input></td>
+          </tr>
+          -->
+          
+          <tr style="height: 5px" />
+          <tr>
+            <td align="center" colspan="3"><button ng-click="register ()" type="button" style="height: 35px; width: 60px">Register</button></td>
+          </tr>
+          <tr style="height: 35px" />
+        </table>
+      </td>
+    </tr>
+    <tr />
+  </table>
+</div>

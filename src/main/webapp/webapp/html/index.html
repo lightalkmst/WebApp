@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+  <link rel="stylesheet" type="text/css" href="style.css"></link>
+  <head>
+  </head>
+  <body>
+  	<!-- dependencies -->
+    <script src="underscore.js"></script>
+    <script src="jquery.js"></script>
+    <script>
+      <!-- when adding another page, add it to the list and to the page bodies at the bottom -->
+      var pages = [
+        'home',
+        'login',
+        'register',
+        'logout',
+      ]
+      _.each (pages, h => $ (() => $ ('#' + h + '_page').load (h + '.html')))
+    </script>
+    
+    <script src="angular.js"></script>
+    <!-- end dependencies -->
+    
+    <!-- app js-->
+    <script src="app.js"></script>
+    <!-- end app js-->
+    
+    <!-- app html -->
+    <div ng-app="App">
+      <div ng-controller="AppCtrl as App">
+        <!-- top navigation bar -->
+        <header>
+          <div class="container">
+            <table style="height: 40px; width: 100%">
+              <tr>
+                <td align="left">
+                  Hello, {{appData.fname || "guest"}}!
+                </td>
+                <td align="right">
+                  Navigation: 
+                  <select ng-model="appData.state" id="navigator">
+                    <option value="home">Home</option>
+                    <option value="login">Log In</option>
+                    <option value="register">Register</option>
+                    <option value="logout">Log Out</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <img src="banner.jpg" alt="Failed to load image" style="width: 100%; height: 140px;">
+        </header>
+        <!-- end top navigation bar -->
+        
+        <!-- page body -->
+        <div ng-if="appData.state == 'home'" id="home_page"></div>
+        <div ng-if="appData.state == 'login'" id="login_page"></div>
+        <div ng-if="appData.state == 'register'" id="register_page"></div>
+        <div ng-if="appData.state == 'logout'" id="logout_page"></div>
+        <!-- end page body -->
+      </div>
+    </div>
+    <!-- end app html -->
+  	
+  </body>
+</html>
