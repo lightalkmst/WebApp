@@ -22,7 +22,7 @@ class MyScalatraServlet extends WebappStack {
           case _ => status (400); ""
         }
       }
-      case _ => ""
+      case _ => status (400); ""
     }
   }
   
@@ -42,6 +42,7 @@ class MyScalatraServlet extends WebappStack {
     )
   
   val files = 
+    List ("/") ++
     types.flatMap (x => new File (webapp_folder + '\\' + x).listFiles)
       .map (_.toString ())
       .map (x => x.substring (x.lastIndexOf ('\\') + 1))
@@ -57,8 +58,12 @@ class MyScalatraServlet extends WebappStack {
           file_type + java.io.File.separatorChar + 
           name
         val get_file_text = () => {
-          val src = Source.fromFile (path)
-          try src.mkString finally src.close ()
+          var (src: Source) = null
+          try {
+            src = Source.fromFile (path)
+            src.mkString
+          }
+          finally if (src != null) src.close ()
         }
         file_type match {
           case "html" => scala.xml.Unparsed (get_file_text ())
